@@ -9,7 +9,7 @@
 <br/>
 
 студента 1 курса группы ПИ-б-о-191(1)  
-Корзина Василия Алексеевича
+Пихтиенко Дарья Владиславовна
 направления подготовки 09.03.04 "Программная инженерия"  
 <br/>
 
@@ -37,405 +37,277 @@
 
 ```c++
 #include <iostream>
-#include <ctime>
 #include "game.h"
+#include <ctime>
+using namespace std;
 
 
-Game initGame(char userChar)
-{
-	srand(time(NULL));
-	Game game;
+Game initGame(char userChar){
+  srand(time(NULL));
+    Game gra;
 
-	game.status = PLAY;
-	
-	game.userChar = userChar;
-	if (userChar == 'x')
-		game.botChar = '0';
-	else
-		game.botChar = 'x';
+    gra.status=PLAY;
 
-	for (char i = 0; i < 3; i++)
-		for (char j = 0; j < 3; j++)
-			game.board[i][j] = ' ';
+    for(int i=0;i<3;i++)
+        for(int j=0;j<3;j++)
+            gra.board[i][j]=' ';
 
-	if (rand() % 2)
-	{
-		game.isUserTurn = true;
-	}
-	else
-	{
-		game.isUserTurn = false;
-	}
+    if((rand()%2))
+       gra.isUserTurn=1;
+    else
+       gra.isUserTurn=0;
 
-	
-	return game;
+    gra.userChar=userChar;
+
+    if(gra.userChar=='X')
+    gra.botChar='O';
+    else
+      gra.botChar='X';
+
+    return gra;
 }
-
 void updateDisplay(const Game game)
 {
-	system("cls");
-
-	std::cout << "\ta\tb\tc\n1\t"<<game.board[0][0]<<"\t" << game.board[0][1] << "\t" << game.board[0][2] <<
-		"\n2\t" << game.board[1][0] << "\t" << game.board[1][1] << "\t" << game.board[1][2] <<
-		"\n3\t" << game.board[2][0] << "\t" << game.board[2][1] << "\t" << game.board[2][2] << "\n";
-
-	return;
-}
-
-void botTurn(Game* game)
+ system("cls");
+    cout<<"\t0\t1\t2\n";
+ for(int i=0;i<3;i++)
 {
-	short num_X=0, num_Y=0, j2=0;
-
-	for (short i = 0; i < 3; i++)
-		for (short j = 0; j < 3; j++)
-			if (game->board[i][j] != ' ')
-				j2++;
-	if (j2 == 0)
-	{
-		game->board[1][1] = game->botChar;
-		return;
-	}
-
-	j2 = 0;
-
-	for (short i = 0; i < 3; i++)
-	{
-		if (game->board[i][i] == game->userChar)
-			num_X++;
-		if (game->board[i][i] == ' ')
-		{ 
-			num_Y++;
-			j2 = i;
-		}
-	}
-	if ( (num_X == 2) && (num_Y == 1) )
-	{
-		game->board[j2][j2] = game->botChar;
-		return;
-	}
-
-	num_X = 0;
-	num_Y = 0;
-	for (short i = 0; i < 3; i++)
-	{
-		if (game->board[i][2-i] == game->userChar)
-			num_X++;
-		if (game->board[i][2-i] == ' ')
-		{
-			num_Y++;
-			j2 = i;
-		}
-	}
-	if ((num_X == 2) && (num_Y == 1))
-	{
-		game->board[j2][2-j2] = game->botChar;
-		return;
-	}
-
-
-	for (short i = 0; i < 3; i++)
-	{
-		num_X = 0;
-		num_Y = 0;
-
-		for (short j = 0; j < 3; j++)
-		{
-			j2 = j;
-
-			if (game->board[i][j] == game->userChar)
-			{ 
-				num_X++;
-				if (num_X == 2)
-				{
-					j = 2; 
-
-					while (j >= 0)
-					{
-						if (game->board[i][j] == ' ')
-						{
-							game->board[i][j] = game->botChar;
-							return;
-						}
-
-						j--;
-					}
-				}
-				j = j2;
-			}
-
-			if (game->board[j][i] == game->userChar)				
-			{
-				num_Y++;
-				if (num_Y == 2)
-				{
-					j = 2;
-
-					while (j >= 0)
-					{
-						if (game->board[j][i] == ' ')
-						{
-							game->board[j][i] = game->botChar;
-							return;
-						}
-
-						j--;
-					}
-				}
-				j = j2;
-			}
-
-
-		}
-	}
-
-
-	do
-	{
-		num_X = rand() % 3;
-		num_Y = rand() % 3;
-
-		if (game->board[num_X][num_Y] == ' ')
-		{
-			game->board[num_X][num_Y] = game->botChar;
-			return;
-		}
-
-	} while (true);
+    cout << i << '\t';
+     for(int j=0;j<3;j++)
+         cout<< game.board[i][j] << '\t';
+         cout << '\n';
+}
 
 }
 
-void userTurn(Game* game)
-{
-	char a;
-	short b;
+void botTurn(Game* game){
+    bool isEmpty = true;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (game->board[i][j] != ' ') isEmpty = false;
+        }
+    }
+    if (isEmpty) {
+     game->board[1][1]=game->botChar;
+     return;
+    }
 
-	bool wrong = 1;
+    int kolvoX=0;
+    for (int i = 0; i < 3; i++) {
+         kolvoX=0;
+        for (int j = 0; j < 3; j++) {
+           if(game->board[i][j]==game->userChar){
+               kolvoX++;
+               if(kolvoX==2)
+                   for(int j2=0;j2<3;j2++){
+                       if(game->board[i][j2]==' '){
+                           game->board[i][j2]=game->botChar;
+                           return;
+                       }
+                   }
+               }
+           }
+       }
 
-	std::cout << "User turn, pls enter x, y: ";
-	do
-	{
-		std::cin >> a >> b;
-		
-		switch (a)
-		{
-		case 'a': a = 0;
-			break;
-		case 'b': a = 1;
-			break;
-		case 'c': a = 2;
-			break;
-		default:
-			std::cout << "wrong a\n";
-			break;
-		}
+    int kolvoY=0;
+ for (int j = 0; j < 3; j++) {
+         kolvoY=0;
+    for (int i = 0; i < 3; i++) {
+           if(game->board[i][j]==game->userChar){
+               kolvoY++;
+               if(kolvoY==2)
+                   for(int i2=0;i2<3;i2++){
+                       if(game->board[i2][j]==' '){
+                           game->board[i2][j]=game->botChar;
+                           return;
+                       }
+                   }
+               }
+           }
+       }
 
-		switch (b)
-		{
-		case 1: b--;
-			break;
-		case 2: b--;
-			break;
-		case 3: b--;
-			break;
-		default:
-			std::cout << "wrong b\n";
-			break;
-		}
+       int main_diag=0;
+     for(int i=0;i<3;i++){
+         if(game->board[i][i]==game->userChar){
+             main_diag++;
+             if(main_diag==2){
+                 for(int i2=0;i2<3;i2++){
+                     if(game->board[i2][i2]==' '){
+                         game->board[i2][i2]=game->botChar;
+                         return;
+                     }
+                 }
+             }
+         }
+     }
 
-
-		if  (game->board[b][a] == ' ')
-			wrong = 0;
-		else
-			std::cout << "wrong place!\n";
-
-
-	} while (wrong);
-
-	game->board[b][a] = game->userChar;
-
+ int dop_diag=0;
+for(int i=0;i<3;i++){
+   if(game->board[i][2-i]==game->userChar){
+       dop_diag++;
+       if(dop_diag==2){
+           for(int i2=0;i2<3;i2++){
+               if(game->board[i2][2-i2]==' '){
+                   game->board[i2][2-i2]=game->botChar;
+                   return;
+               }
+           }
+       }
+   }
 }
 
-bool updateGame(Game* game)
-{
-	for (short i = 0; i < 3; i++)
-	{
-		if (game->board[i][0] == 'x' || game->board[i][0] == '0')
-		{
-			if ( (game->board[i][1] == game->board[i][0]) && (game->board[i][2] == game->board[i][0]) )
-			{ 
-				if (game->board[i][0] == game->userChar)
-					game->status = USER_WIN;
-				else 
-					game->status = BOT_WIN;
-				return true;
-			}
-		}
-
-	
-		if (game->board[0][i] == 'x' || game->board[0][i] == '0')
-		{
-			if ((game->board[1][i] == game->board[0][i]) && (game->board[2][i] == game->board[0][i]))
-			{ 
-				if (game->board[0][i] == game->userChar)
-					game->status = USER_WIN;
-				else
-					game->status = BOT_WIN;
-				return true;
-			}
-		}
-	}
-
-	if (game->board[0][0] == 'x' || game->board[0][0] == '0')
-	{
-		if ((game->board[1][1] == game->board[0][0]) && (game->board[2][2] == game->board[0][0]))
-		{ 
-			if (game->board[1][1] == game->userChar)
-				game->status = USER_WIN;
-			else
-				game->status = BOT_WIN;
-			return true;
-		}
-	}
-
-	if (game->board[2][0] == 'x' || game->board[2][0] == '0')
-	{
-		if ((game->board[1][1] == game->board[0][2]) && (game->board[1][1] == game->board[2][0]))
-		{ 
-			if (game->board[1][1] == game->userChar)
-				game->status = USER_WIN;
-			else
-				game->status = BOT_WIN;
-			return true;
-		}
-	}
-	
-
-	bool draw = 1;
-	for (short i = 0; i < 3; i++)
-	{
-		for (short j = 0; j < 3; j++)
-			if (game->board[i][j] == ' ')
-				draw = 0;
-	}
-	if (draw)
-	{
-		game->status = NOT_WIN;
-		return true;
-	}
-
-	game->isUserTurn = !game->isUserTurn;
-	return false;
+    //Random
+    int rRow;
+    int rCol;
+    do{
+        rRow = rand() % 3;
+        rCol = rand() % 3;
+    }
+    while (game->board[rRow][rCol] != ' ');
+    game->board[rRow][rCol] = game->botChar;
 }
+
+void userTurn(Game* game){
+    while(true){
+        cout<<"X Y: ";
+        int x,y;
+        cin>>x>>y;
+
+        if((x<0 || x>2)||(y<0 || y>2)|| (game->board[x][y]!=' ')){
+            cout<<"Error.\n";
+            continue;
+        }
+
+        game->board[x][y]=game->userChar;
+        break;
+    }
+}
+bool updateGame(Game* game){
+    game->isUserTurn=!game->isUserTurn;
+        int user_rows[3] = {0,0,0};
+        int user_cols[3] = {0,0,0};
+        int user_diags[2] = {0,0}; // 0 - главная, 1 - побочная
+
+        int bot_rows[3] = {0,0,0};
+        int bot_cols[3] = {0,0,0};
+        int bot_diags[2] = {0,0}; // 0 - главная, 1 - побочная
+
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (game->board[i][j] == game->userChar) {
+                    user_rows[i]++;
+                    user_cols[j]++;
+                    if (i == j) user_diags[0]++;
+                    if (i == 2 - j) user_diags[1]++;
+
+                    if (user_rows[i] == 3 || user_cols[j] == 3 || user_diags[0] == 3 || user_diags[1] == 3) {
+                       game->status = USER_WIN;
+                        return true;
+                    }
+                }
+                else if (game->board[i][j] == game->botChar) {
+                    bot_rows[i]++;
+                    bot_cols[j]++;
+                    if (i == j) bot_diags[0]++;
+                    if (i == 2 - j) bot_diags[1]++;
+                        game->status = BOT_WIN;
+                    if (bot_rows[i] == 3 || bot_cols[j] == 3 || bot_diags[0] == 3 || bot_diags[1] == 3) {
+
+                        return true;
+                    }
+                }
+            }
+            }
+            // Проверка на ничью
+                bool isDraw = true;
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (game->board[i][j] == ' ') isDraw = false;
+                    }
+                }
+                if (isDraw) {
+                    game->status = NOT_WIN;
+                    return true;
+                }
+    return false;
+}
+
 ```
 **3\.** В файле "game.h" создаем прототипы функций, реализованных в "game.cpp"\
 
 ```c++
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
-/* Состояния игры */
-enum Status 
-{
-	PLAY,            // Игра продолжается
-	USER_WIN,        // Игрок победил
-	BOT_WIN,         // Бот победил
-	NOT_WIN          // Ничья. Победителя нет, но и на поле нет свободной ячейки
+enum Status {
+   PLAY,            // Игра продолжается
+   USER_WIN,        // Игрок победил
+   BOT_WIN,         // Бот победил
+   NOT_WIN          // Ничья. Победителя нет, но и на поле нет свободной ячейки
 };
-
-struct Game 
-{
-	char board[3][3];  // Игровое поле
-	bool isUserTurn;  // Чей ход. Если пользователя, то isUserTurn = true
-	char userChar;    // Символ которым играет пользователь
-	char botChar;     // Символ которым играет бот
-	Status status;
+struct Game{
+   char board[3][3];  // Игровое поле
+   bool isUserTurn;  // Чей ход. Если пользователя, то isUserTurn = true
+   char userChar;    // Символ которым играет пользователь
+   char botChar;     // Символ которым играет бот
+   Status status;
 };
-
-
-/**
-* Выполняет следующие действия:
-*  1. Очищает игровое поле заполняя его пробелами
-*  2. Случайным образом определяет чей ход
-*  3. Устанавливает символ для Игрока (Задаётся параметром userChar)
-*  4. Устанавливает символ для бота
-*  5. Возвращает заполненную структуру
-*/
 
 Game initGame(char userChar);
-/**
-* Выполняет следующие действия:
-*  1. Очищает экран
-*  2. Отображает содержимое игрового поля.
-*/
 
 void updateDisplay(const Game game);
-/**
-* Выполняет ход бота. В выбранную ячейку устанавливается символ которым играет бот.
-* Бот должен определять строку, столбец или диагональ в которой у игрока больше всего иксиков/ноликов и ставить туда свой символ.
-* Если на поле ещё нет меток, бот должен ставить свой знак в центр. В остальных случаях бот ходит рандомно.
-*/
 
 void botTurn(Game* game);
-/**
-* Функция отвечает за ход игрока. Если игрок вводит не допустимые
-* значения, ругнуться и попросить ввести заново
-*/
 
 void userTurn(Game* game);
-/**
-* Функция определяет как изменилось состояние игры после последнего хода.
-* Функция сохраняет новое состояние игры в структуре game и передаёт ход другому
-* игроку.
-* Функция возвращает true, если есть победитель или ничья, иначе false.
-*/
+
 bool updateGame(Game* game);
+#endif // GAME_H
+
 ```
 **4\.** В функции main в главном файле реализуем игру с помощью написанных ранее функций\
 
 ```c++
 #include <iostream>
 #include "game.h"
+using namespace std;
 
 int main()
 {
+    Game gra=initGame('X');
+    updateDisplay(gra);
 
-	setlocale(LC_ALL, "rus");
+while(true){
+    updateDisplay(gra);
+    if (gra.isUserTurn)
+        userTurn(&gra);
+    else
+        botTurn(&gra);
+    updateDisplay(gra);
 
-	char a=0;
-
-	while (a != 'x' && a != '0')
-	{
-		std::cout << "Choose your character: ";
-		std::cin >> a;
-	}
-
-	Game game = initGame(a);
-	while (!updateGame(&game))
-	{
-		updateDisplay(game);
-		if (game.isUserTurn)
-			userTurn(&game);
-		else
-			botTurn(&game);
-		updateDisplay(game);
-	}
-
-	switch (game.status)
-	{
-	case BOT_WIN: 
-		std::cout << "The bot won!";
-		break;
-	case USER_WIN:
-		std::cout << "You won!";
-		break;
-	case NOT_WIN:
-		std::cout << "Draw!";
-		break;
-	default:
-		std::cout << "err!";
-		break;
-	}
-
+    if (updateGame(&gra)==true)
+       break;
 }
+
+    switch(gra.status)
+    {
+    case BOT_WIN:
+        cout<<"BOT WIN";
+        break;
+    case USER_WIN:
+        cout<<"USER WIN";
+        break;
+    case NOT_WIN:
+        cout<<"DRAW";
+        break;
+    default:
+        cout<<"ERROR";
+        break;
+    }
+ return 0;
+}
+
 ```
 
 ![Рис.1 Результат отработки программы](https://raw.githubusercontent.com/GachiGucciGhoul/Laboratory_works/master/Lab4/images/draw.PNG)\
